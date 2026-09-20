@@ -1,0 +1,23 @@
+import jwt from 'jsonwebtoken';
+
+const isAuth = (req, res, next) => {
+    try {
+        const { token } = req.cookies || {};
+        if (!token) {
+            return res.status(401).json({ message: "Token missing, unauthorized access" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.userId; 
+        next();
+    } catch (err) {
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token has expired" });
+        }
+        if (err.name === "JsonWebTokenError") {
+            return res.status(401).json({ message: "Invalid token" });
+        }
+        return res.status(500).json({ message: "Internal server error in authentication" });
+    }
+};
+
+export default isAuth;
