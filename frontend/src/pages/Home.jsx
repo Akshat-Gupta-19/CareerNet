@@ -3,75 +3,19 @@ import Nav from "../components/Nav";
 import { FiPlusCircle } from "react-icons/fi";
 import { userDataContext } from "../context/UserContext";
 import EditProfile from "../components/EditProfile";
+import CreatePost from "../components/CreatePost";
+import Post from "../components/Post";
 
 function Home() {
-  let { userData, setUserData, edit, setEdit } = useContext(userDataContext);
+  let { userData, setUserData, edit, setEdit, postData, setPostData } =
+    useContext(userDataContext);
   let [createPost, setCreatePost] = useState(false);
 
   return (
     <div className="w-full min-h-screen bg-[#e8e8e3]">
       <Nav />
       {edit && <EditProfile />}
-
-      {createPost && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center px-4">
-          <div className="w-full max-w-[550px] bg-white rounded-xl shadow-2xl overflow-hidden">
-            {/* Header */}
-            <div className="relative flex items-center justify-center h-[60px] border-b">
-              <h2 className="text-lg font-semibold text-gray-800">
-                Create a post
-              </h2>
-
-              <button
-                onClick={() => setCreatePost(false)}
-                className="absolute right-4 top-3 w-[38px] h-[38px] rounded-full flex items-center justify-center hover:bg-gray-100 transition text-gray-600"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Profile */}
-            <div className="flex items-center gap-3 px-5 py-4">
-              <img
-                src={userData.profileImage}
-                alt="profile"
-                className="w-[48px] h-[48px] rounded-full object-cover"
-              />
-
-              <div>
-                <h3 className="font-semibold text-gray-800">
-                  {userData.firstName} {userData.lastName}
-                </h3>
-
-                <p className="text-sm text-gray-500">Post to anyone</p>
-              </div>
-            </div>
-
-            {/* Text */}
-            <div className="px-5">
-              <textarea
-                placeholder="What do you want to talk about?"
-                className="w-full min-h-[200px] resize-none outline-none text-[17px] text-gray-800 placeholder:text-gray-500"
-              />
-            </div>
-
-            {/* Bottom */}
-            <div className="border-t px-5 py-4 flex items-center justify-between">
-              {/* Add Photo */}
-              <label className="flex items-center gap-2 text-gray-600 cursor-pointer hover:text-blue-600 transition">
-                <span className="text-xl">📷</span>
-                <span className="text-sm font-medium">Add photo</span>
-                <input type="file" accept="image/*" className="hidden" />
-              </label>
-
-              {/* Post */}
-              <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
-                Post
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {createPost && <CreatePost setCreatePost={setCreatePost} />}
 
       {/* ================= MAIN CONTAINER ================= */}
       <div className="w-full max-w-[1200px] mx-auto px-4 py-6">
@@ -138,7 +82,7 @@ function Home() {
 
           <div className="w-full">
             {/* ================= CREATE POST ================= */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4" onClick={() => setCreatePost(true)}>
               <div className="flex items-center gap-3">
                 <img
                   src={userData.profileImage}
@@ -146,7 +90,6 @@ function Home() {
                   className="w-[45px] h-[45px] rounded-full object-cover"
                 />
                 <button
-                  onClick={() => setCreatePost(true)}
                   className="flex-1 h-[48px] rounded-full border border-gray-400 text-left px-5 text-gray-500 hover:bg-gray-100 transition"
                 >
                   Start a post
@@ -172,109 +115,19 @@ function Home() {
               </div>
             </div>
 
-            {/* ================================================= */}
-            {/*                     POST 1                        */}
-            {/* ================================================= */}
-
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-5 p-5">
-              {/* Post Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex gap-3">
-                  <img
-                    src="https://i.pravatar.cc/150?img=11"
-                    alt="user"
-                    className="w-[48px] h-[48px] rounded-full object-cover"
-                  />
-
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Ankush Sahu</h3>
-
-                    <p className="text-[12px] text-gray-500">
-                      FULL STACK DEVELOPER
-                    </p>
-
-                    <p className="text-[12px] text-gray-500">4 days ago</p>
-                  </div>
-                </div>
-
-                <button className="px-4 py-1 rounded-full border border-[#0a9ccf] text-[#0788b7] text-sm">
-                  pending
-                </button>
-              </div>
-
-              {/* Post Content */}
-              <div className="mt-7">
-                <p className="text-gray-800 text-[15px]">heello</p>
-
-                <p className="text-gray-600 mt-4">read more...</p>
-              </div>
-
-              {/* Likes */}
-              <div className="mt-5 flex items-center gap-2 text-sm text-gray-500">
-                👍
-                <span>1</span>
-              </div>
-
-              {/* Actions */}
-              <div className="border-t border-gray-200 mt-4 pt-3 flex gap-8">
-                <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition">
-                  👍
-                  <span>Like</span>
-                </button>
-
-                <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition">
-                  💬
-                  <span>Comment</span>
-                </button>
-              </div>
-            </div>
-
-            {/* ================================================= */}
-            {/*                     POST 2                        */}
-            {/* ================================================= */}
-
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-5 p-5">
-              {/* Post Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex gap-3">
-                  <img
-                    src="https://i.pravatar.cc/150?img=47"
-                    alt="user"
-                    className="w-[48px] h-[48px] rounded-full object-cover"
-                  />
-
-                  <div>
-                    <h3 className="font-semibold text-gray-800">Janvi Sahu</h3>
-
-                    <p className="text-[12px] text-gray-500">JAVA DEVELOPER</p>
-
-                    <p className="text-[12px] text-gray-500">4 days ago</p>
-                  </div>
-                </div>
-
-                <button className="px-4 py-1 rounded-full border border-[#0a9ccf] text-[#0788b7] text-sm">
-                  disconnect
-                </button>
-              </div>
-
-              {/* Post Content */}
-              <div className="mt-7">
-                <p className="text-gray-800">this is my home</p>
-              </div>
-
-              {/* Actions */}
-              <div className="border-t border-gray-200 mt-5 pt-3 flex gap-8">
-                <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition">
-                  👍
-                  <span>Like</span>
-                </button>
-
-                <button className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition">
-                  💬
-                  <span>Comment</span>
-                </button>
-              </div>
-            </div>
+            {/*                     POST                       */}
+            {postData.map((post, idx) => (
+              <Post
+                key={idx}
+                id={post._id}
+                description={post.description}
+                author={post.author}
+                image={post.image}
+                like={post.like}
+                comment={post.comment}
+                createdAt={post.createdAt}
+              />
+            ))}
           </div>
 
           {/* ================================================= */}
