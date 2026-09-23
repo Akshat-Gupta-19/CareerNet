@@ -83,7 +83,7 @@ function Nav() {
               className="flex flex-col items-center cursor-pointer hover:text-black text-xs select-none"
             >
               <img
-                src={logo}
+                src={userData.profileImage}
                 alt="Profile"
                 className="w-6 h-6 rounded-full object-cover"
               />
@@ -95,7 +95,7 @@ function Nav() {
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-50 flex flex-col items-center">
                 {/* 1. Large Round Profile Image */}
                 <img
-                  src={logo}
+                  src={userData.profileImage}
                   alt="Profile Large"
                   className="w-16 h-16 rounded-full object-cover border border-gray-300 mb-3"
                 />

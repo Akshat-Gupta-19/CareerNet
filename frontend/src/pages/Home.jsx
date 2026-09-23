@@ -5,12 +5,73 @@ import { userDataContext } from "../context/UserContext";
 import EditProfile from "../components/EditProfile";
 
 function Home() {
-  let {userData,setUserData ,edit ,setEdit } = useContext(userDataContext);
+  let { userData, setUserData, edit, setEdit } = useContext(userDataContext);
+  let [createPost, setCreatePost] = useState(false);
 
   return (
     <div className="w-full min-h-screen bg-[#e8e8e3]">
       <Nav />
-      {edit && <EditProfile/>}
+      {edit && <EditProfile />}
+
+      {createPost && (
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center px-4">
+          <div className="w-full max-w-[550px] bg-white rounded-xl shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="relative flex items-center justify-center h-[60px] border-b">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Create a post
+              </h2>
+
+              <button
+                onClick={() => setCreatePost(false)}
+                className="absolute right-4 top-3 w-[38px] h-[38px] rounded-full flex items-center justify-center hover:bg-gray-100 transition text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Profile */}
+            <div className="flex items-center gap-3 px-5 py-4">
+              <img
+                src={userData.profileImage}
+                alt="profile"
+                className="w-[48px] h-[48px] rounded-full object-cover"
+              />
+
+              <div>
+                <h3 className="font-semibold text-gray-800">
+                  {userData.firstName} {userData.lastName}
+                </h3>
+
+                <p className="text-sm text-gray-500">Post to anyone</p>
+              </div>
+            </div>
+
+            {/* Text */}
+            <div className="px-5">
+              <textarea
+                placeholder="What do you want to talk about?"
+                className="w-full min-h-[200px] resize-none outline-none text-[17px] text-gray-800 placeholder:text-gray-500"
+              />
+            </div>
+
+            {/* Bottom */}
+            <div className="border-t px-5 py-4 flex items-center justify-between">
+              {/* Add Photo */}
+              <label className="flex items-center gap-2 text-gray-600 cursor-pointer hover:text-blue-600 transition">
+                <span className="text-xl">📷</span>
+                <span className="text-sm font-medium">Add photo</span>
+                <input type="file" accept="image/*" className="hidden" />
+              </label>
+
+              {/* Post */}
+              <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ================= MAIN CONTAINER ================= */}
       <div className="w-full max-w-[1200px] mx-auto px-4 py-6">
@@ -25,28 +86,27 @@ function Home() {
               {/* ================= COVER IMAGE ================= */}
               <div className="h-[95px] relative">
                 <img
-                  src="https://i.pravatar.cc/150?img=12"
+                  src={userData.coverImage}
                   alt="cover"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-16 right-2 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                {/* <div className="absolute bottom-16 right-2 bg-white rounded-full flex items-center justify-center cursor-pointer">
                       <FiPlusCircle size={22} className="text-[#0a9ccf]" />
-                </div>
+                </div> */}
 
-                {/* ================= PROFILE IMAGE ================= */}
                 {/* ================= PROFILE IMAGE ================= */}
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
                   <div className="w-[82px] h-[82px] rounded-full border-4 border-white bg-gray-200 overflow-hidden relative">
                     <img
-                      src="https://i.pravatar.cc/150?img=12"
+                      src={userData.profileImage}
                       alt="profile"
                       className="w-full h-full object-cover"
                     />
 
                     {/* Plus Icon */}
-                    <div className="absolute bottom-0 right-3 bg-white rounded-full flex items-center justify-center cursor-pointer">
+                    {/* <div className="absolute bottom-0 right-3 bg-white rounded-full flex items-center justify-center cursor-pointer">
                       <FiPlusCircle size={22} className="text-[#0a9ccf]" />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
@@ -56,9 +116,16 @@ function Home() {
                 <h2 className="text-[20px] font-semibold text-gray-800">
                   {userData.firstName} {userData.lastName}
                 </h2>
-                <p className="text-[14px] text-gray-500 mt-1">{userData.headline}</p>
-                <p className="text-[13px] text-gray-500 mt-1">{userData.location}</p>
-                <button className="mt-5 w-full h-[38px] rounded-full border border-[#0a9ccf] text-[#0788b7] font-medium hover:bg-[#eaf8fc] transition" onClick={()=>setEdit(true)}>
+                <p className="text-[14px] text-gray-500 mt-1">
+                  {userData.headline}
+                </p>
+                <p className="text-[13px] text-gray-500 mt-1">
+                  {userData.location}
+                </p>
+                <button
+                  className="mt-5 w-full h-[38px] rounded-full border border-[#0a9ccf] text-[#0788b7] font-medium hover:bg-[#eaf8fc] transition"
+                  onClick={() => setEdit(true)}
+                >
                   Edit Profile ✎
                 </button>
               </div>
@@ -74,12 +141,14 @@ function Home() {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
               <div className="flex items-center gap-3">
                 <img
-                  src="https://i.pravatar.cc/150?img=12"
+                  src={userData.profileImage}
                   alt="profile"
                   className="w-[45px] h-[45px] rounded-full object-cover"
                 />
-
-                <button className="flex-1 h-[48px] rounded-full border border-gray-400 text-left px-5 text-gray-500 hover:bg-gray-100 transition">
+                <button
+                  onClick={() => setCreatePost(true)}
+                  className="flex-1 h-[48px] rounded-full border border-gray-400 text-left px-5 text-gray-500 hover:bg-gray-100 transition"
+                >
                   Start a post
                 </button>
               </div>
