@@ -6,9 +6,19 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import userRouter from './routes/user.routes.js';
 import postRouter from './routes/post.routes.js';
+import connectionRouter from './routes/connection.routes.js';
+import http from 'http';
+import { Server } from 'socket.io';
 
 dotenv.config();
 const app = express();
+let server = http.createServer(app);
+export const io = new Server(server,{
+    cors:({
+        origin : "http://localhost:5173",
+        credentials: true
+    })
+})
 
 app.use(cors({
     origin : "http://localhost:5173",
@@ -20,10 +30,23 @@ app.use(cookieParser());
 app.use("/api/auth",authRouter);
 app.use("/api/user",userRouter);
 app.use("/api/post",postRouter);
+app.use("/api/connection",connectionRouter);
+export const userSocketMap = new Map();
+
+io.on("connection",(socket)=>{
+    console.log("user connected",socket.id);
+    socket.on("register",(userId)=>{
+        userSocketMap.set(userId,socket.id);
+    })
+    socket.on("disconnect",(socket)=>{
+        console.log("user disconnected",socket.id);
+    })
+})
+
+
 
 let port = process.env.PORT || 8000;
-
-app.listen(port,()=>{
+server.listen(port,()=>{
     connectDb();
     console.log(`server started on port : ${port}`);
 })

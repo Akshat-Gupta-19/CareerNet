@@ -3,6 +3,11 @@ import moment from "moment";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
+import {io} from "socket.io-client";
+
+let socket = io("http://localhost:8000");
+
+
 
 function Post({ id, author, like, comment, description, image, createdAt }) {
   let [more, setMore] = useState(false);
@@ -44,6 +49,24 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       console.log(err);
     }
   }
+
+  useEffect(()=>{
+    socket.on("likeUpdated",({postId,likes})=>{
+      if(postId==id){
+        setlikes(likes);
+      }
+    })
+    socket.on("updateComment",({postId,comment})=>{
+      if(postId==id){
+        setComments(comment);
+      }
+    })
+
+    return ()=>{
+      socket.off("likeUpdated");
+      socket.off("updateComment");
+    }
+  },[id])
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-5 p-5">
