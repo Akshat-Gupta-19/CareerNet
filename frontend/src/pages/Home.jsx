@@ -5,11 +5,13 @@ import { userDataContext } from "../context/UserContext";
 import EditProfile from "../components/EditProfile";
 import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   let { userData, setUserData, edit, setEdit, postData, setPostData } =
     useContext(userDataContext);
   let [createPost, setCreatePost] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="w-full min-h-screen bg-[#e8e8e3]">
@@ -30,6 +32,7 @@ function Home() {
               {/* ================= COVER IMAGE ================= */}
               <div className="h-[95px] relative">
                 <img
+
                   src={userData.coverImage}
                   alt="cover"
                   className="w-full h-full object-cover"
@@ -42,6 +45,7 @@ function Home() {
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
                   <div className="w-[82px] h-[82px] rounded-full border-4 border-white bg-gray-200 overflow-hidden relative">
                     <img
+                      onClick={()=>{navigate("/profile")}}
                       src={userData.profileImage}
                       alt="profile"
                       className="w-full h-full object-cover"

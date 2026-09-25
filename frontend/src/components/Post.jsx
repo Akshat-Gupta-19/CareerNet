@@ -4,12 +4,15 @@ import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
 import {io} from "socket.io-client";
+import ConnectionButton from "./ConnectionButton";
+import { useNavigate } from 'react-router-dom';
 
 let socket = io("http://localhost:8000");
 
 
 
 function Post({ id, author, like, comment, description, image, createdAt }) {
+  const navigate = useNavigate();
   let [more, setMore] = useState(false);
   let { serverUrl } = useContext(authDataContext);
   let [likes, setlikes] = useState(like || []);
@@ -74,6 +77,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
           <img
+            onClick={()=>{navigate("/profile")}}
             src={author.profileImage || "https://i.pravatar.cc/150?img=12"}
             alt="user"
             className="w-[48px] h-[48px] rounded-full object-cover"
@@ -92,9 +96,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
           </div>
         </div>
 
-        <button className="px-4 py-1 rounded-full border border-[#0a9ccf] text-[#0788b7] text-sm">
-          connect
-        </button>
+        {userData._id!=author._id && <ConnectionButton userId={author._id}/>}
       </div>
 
       {/* Post Content */}
