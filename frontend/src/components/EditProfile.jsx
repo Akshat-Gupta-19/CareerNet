@@ -16,6 +16,7 @@ function EditProfile() {
   let [location, setLocation] = useState(userData?.location || "");
   let [gender, setGender] = useState(userData?.gender || "");
   let [headline, setHeadline] = useState(userData?.headline || "");
+  let [about, setAbout] = useState(userData?.about || "");
   // ================= SKILLS =================
   let [skills, setSkills] = useState(userData?.skills || []);
   let [newSkills, setNewSkills] = useState("");
@@ -31,13 +32,14 @@ function EditProfile() {
   let [description, setDescription] = useState("");
   // =============images========
   let [frontendProfileImage, setFrontendProfileImage] = useState(
-    userData.profileImage
+    userData.profileImage,
   );
   let [backendProfileImage, setBackendProfileImage] = useState(null);
   let [frontendCoverImage, setFrontendCoverImage] = useState(
-    userData.coverImage );
+    userData.coverImage,
+  );
   let [backendCoverImage, setBackendCoverImage] = useState(null);
-  let [saving , setSaving] = useState(false);
+  let [saving, setSaving] = useState(false);
 
   // SKILLS
   function addSkill(e) {
@@ -119,6 +121,7 @@ function EditProfile() {
       formData.append("username", username);
       formData.append("email", email);
       formData.append("headline", headline);
+      formData.append("about", about);
       formData.append("location", location);
       formData.append("skills", JSON.stringify(skills));
       formData.append("education", JSON.stringify(education));
@@ -331,6 +334,22 @@ function EditProfile() {
               type="text"
               placeholder="e.g. MERN Stack Developer"
               className="w-full h-[42px] px-4 rounded-lg border border-gray-300 outline-none focus:border-[#0a9ccf]"
+            />
+          </div>
+
+          {/* ================= ABOUT ================= */}
+
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              About
+            </label>
+
+            <textarea
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              rows="5"
+              placeholder="Tell people about yourself..."
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 outline-none resize-none focus:border-[#0a9ccf]"
             />
           </div>
 
@@ -659,7 +678,7 @@ function EditProfile() {
               onClick={handleSave}
               className="px-7 h-[40px] rounded-full bg-[#0a9ccf] text-white font-medium hover:bg-[#0788b7] active:scale-95 transition"
             >
-              {saving? "saving..." : "Save"}
+              {saving ? "saving..." : "Save"}
             </button>
           </div>
         </div>

@@ -3,20 +3,18 @@ import moment from "moment";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
-import {io} from "socket.io-client";
+import { io } from "socket.io-client";
 import ConnectionButton from "./ConnectionButton";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 let socket = io("http://localhost:8000");
 
-
-
-function Post({ id, author, like, comment, description, image, createdAt }) {
+function Post({ id, author, like, comment, description, image, createdAt}) {
   const navigate = useNavigate();
   let [more, setMore] = useState(false);
   let { serverUrl } = useContext(authDataContext);
   let [likes, setlikes] = useState(like || []);
-  let { getPost, userData } = useContext(userDataContext);
+  let { getPost, userData ,handleGetProfile} = useContext(userDataContext);
   let [showComment, setShowComment] = useState(false);
   let [commentText, setCommentText] = useState("");
   let [comments, setComments] = useState(comment || []);
@@ -53,23 +51,23 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
     }
   }
 
-  useEffect(()=>{
-    socket.on("likeUpdated",({postId,likes})=>{
-      if(postId==id){
+  useEffect(() => {
+    socket.on("likeUpdated", ({ postId, likes }) => {
+      if (postId == id) {
         setlikes(likes);
       }
-    })
-    socket.on("updateComment",({postId,comment})=>{
-      if(postId==id){
+    });
+    socket.on("updateComment", ({ postId, comment }) => {
+      if (postId == id) {
         setComments(comment);
       }
-    })
+    });
 
-    return ()=>{
+    return () => {
       socket.off("likeUpdated");
       socket.off("updateComment");
-    }
-  },[id])
+    };
+  }, [id]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm mt-5 p-5">
@@ -77,7 +75,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
           <img
-            onClick={()=>{navigate("/profile")}}
+            onClick={()=>{handleGetProfile(author.username)}}
             src={author.profileImage || "https://i.pravatar.cc/150?img=12"}
             alt="user"
             className="w-[48px] h-[48px] rounded-full object-cover"
@@ -96,20 +94,18 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
           </div>
         </div>
 
-        {userData._id!=author._id && <ConnectionButton userId={author._id}/>}
+        {userData._id != author._id && <ConnectionButton userId={author._id} />}
       </div>
 
       {/* Post Content */}
       <div className="mt-7">
-        {image && (
-          <div className="mt-4 w-full rounded-xl overflow-hidden">
-            <img
-              src={image}
-              alt="post"
-              className="w-full max-h-[400px] object-cover"
-            />
-          </div>
-        )}
+        <div className="mt-4 w-full rounded-xl overflow-hidden bg-gray-100 flex justify-center">
+          <img
+            src={image}
+            alt="post"
+            className="w-full max-h-[400px] object-contain"
+          />
+        </div>
 
         <p className="text-gray-800 text-[15px]">
           {more ? description : description.slice(0, 150)}

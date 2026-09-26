@@ -17,7 +17,7 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    let {firstName,lastName,username,email,headline,skills,education,location,gender,experience} = req.body;
+    let {firstName,lastName,username,email,headline,about,skills,education,location,gender,experience} = req.body;
     if (typeof skills === "string") {
       skills = JSON.parse(skills);
     }
@@ -27,7 +27,7 @@ export const updateProfile = async (req, res) => {
     if (typeof experience === "string") {
       experience = JSON.parse(experience);
     }
-    let updateData = {firstName,lastName,username,email,headline,skills,education,location,experience};
+    let updateData = {firstName,lastName,username,email,headline,about,skills,education,location,experience};
 
     if (gender) {
       updateData.gender = gender;
@@ -66,6 +66,25 @@ export const updateProfile = async (req, res) => {
     console.error("updateProfile error:", err);
     return res.status(500).json({
       message: "Internal server error",
+    });
+  }
+};
+
+export const getProfile = async (req, res) => {
+  try {
+    let { username } = req.params;
+    let user = await User.findOne({ username }).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        message: "Username does not exist"
+      });
+    }
+    return res.status(200).json(user);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: err.message
     });
   }
 };

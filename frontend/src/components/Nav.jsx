@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
-  let {userData,setUserData} = useContext(userDataContext);
+  let {userData,setUserData,handleGetProfile} = useContext(userDataContext);
   let {serverUrl} = useContext(authDataContext);
   const navigate = useNavigate();
 
@@ -102,7 +102,7 @@ function Nav() {
                 />
 
                 {/* 2. View Profile Button */}
-                <button className="w-full text-center border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-1 rounded-full text-xs transition mb-3" onClick={()=>{navigate("/profile")}}>
+                <button className="w-full text-center border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-1 rounded-full text-xs transition mb-3" onClick={()=>{handleGetProfile(userData.username)}}>
                   View Profile
                 </button>
 

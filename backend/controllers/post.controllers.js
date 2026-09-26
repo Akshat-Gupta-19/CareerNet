@@ -27,7 +27,7 @@ export const createPost = async (req, res) => {
 export const getPost = async (req, res) => {
   try {
     const post = await Post.find({})
-      .populate("author", "firstName lastName profileImage headline")
+      .populate("author", "firstName lastName profileImage headline username")
       .populate("comment.author","firstName lastName username profileImage headline")
       .sort({ createdAt: -1 });
     return res.status(200).json(post);

@@ -8,13 +8,13 @@ import Post from "../components/Post";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-  let { userData, setUserData, edit, setEdit, postData, setPostData } =
+  let { userData, setUserData, edit, setEdit, postData, setPostData ,handleGetProfile} =
     useContext(userDataContext);
   let [createPost, setCreatePost] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <div className="w-full min-h-screen bg-[#e8e8e3]">
+    <div className="w-full min-h-screen bg-gray-100">
       <Nav />
       {edit && <EditProfile />}
       {createPost && <CreatePost setCreatePost={setCreatePost} />}
@@ -45,7 +45,7 @@ function Home() {
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
                   <div className="w-[82px] h-[82px] rounded-full border-4 border-white bg-gray-200 overflow-hidden relative">
                     <img
-                      onClick={()=>{navigate("/profile")}}
+                      onClick={()=>{handleGetProfile(userData.username)}}
                       src={userData.profileImage}
                       alt="profile"
                       className="w-full h-full object-cover"
