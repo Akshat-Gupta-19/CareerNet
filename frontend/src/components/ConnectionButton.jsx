@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-
 import axios from "axios";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
-
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
+import toast from "react-hot-toast";
 
 const socket = io("http://localhost:8000");
 
@@ -51,8 +50,12 @@ function ConnectionButton({ userId }) {
       console.log(result.data);
 
       setStatus("pending");
+      toast.success("Connection request sent!");
     } catch (err) {
       console.log("sendConnection:", err.response?.data || err);
+      toast.error(
+        err.response?.data?.message || "Failed to send connection request",
+      );
     }
   };
 

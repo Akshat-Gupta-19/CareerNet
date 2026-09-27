@@ -3,6 +3,7 @@ import { FiX, FiImage } from "react-icons/fi";
 import { userDataContext } from "../context/UserContext";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function CreatePost({ setCreatePost }) {
   const { userData } = useContext(userDataContext);
@@ -10,7 +11,7 @@ function CreatePost({ setCreatePost }) {
   let [frontendImage, setFrontendImage] = useState("");
   let [backendImage, setBackendImage] = useState("");
   let [description, setDescription] = useState("");
-  let [isLoading,setIsloading] = useState(false);
+  let [isLoading, setIsloading] = useState(false);
 
   const handleImage = (e) => {
     let file = e.target.files[0];
@@ -35,12 +36,13 @@ function CreatePost({ setCreatePost }) {
         withCredentials: true,
       });
 
-      console.log(result.data);
+      toast.success("Post created successfully!");
 
       setCreatePost(false);
       setIsloading(false);
     } catch (err) {
       console.log(err);
+      toast.error(err.response?.data?.message || "Failed to create post");
     }
   };
 

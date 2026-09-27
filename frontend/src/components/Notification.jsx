@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
 import Nav from "./Nav";
+import toast from "react-hot-toast";
 
 function Notification() {
   const { serverUrl } = useContext(authDataContext);
@@ -37,11 +38,14 @@ function Notification() {
         withCredentials: true,
       });
 
+      toast.success("Notification deleted");
+
       setNotifications((prev) =>
         prev.filter((notification) => notification._id !== id),
       );
     } catch (err) {
       console.log("Delete notification:", err);
+      toast.success("All notifications cleared!");
     }
   };
 

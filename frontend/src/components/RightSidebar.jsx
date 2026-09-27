@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import ConnectionButton from "./ConnectionButton";
 import { userDataContext } from "../context/UserContext";
 
+
 function RightSidebar() {
     let {handleGetProfile} = useContext(userDataContext);
     let {serverUrl} = useContext(authDataContext);

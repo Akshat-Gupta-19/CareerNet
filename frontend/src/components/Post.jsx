@@ -6,15 +6,16 @@ import { userDataContext } from "../context/UserContext";
 import { io } from "socket.io-client";
 import ConnectionButton from "./ConnectionButton";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 let socket = io("http://localhost:8000");
 
-function Post({ id, author, like, comment, description, image, createdAt}) {
+function Post({ id, author, like, comment, description, image, createdAt }) {
   const navigate = useNavigate();
   let [more, setMore] = useState(false);
   let { serverUrl } = useContext(authDataContext);
   let [likes, setlikes] = useState(like || []);
-  let { getPost, userData ,handleGetProfile} = useContext(userDataContext);
+  let { getPost, userData, handleGetProfile } = useContext(userDataContext);
   let [showComment, setShowComment] = useState(false);
   let [commentText, setCommentText] = useState("");
   let [comments, setComments] = useState(comment || []);
@@ -45,9 +46,10 @@ function Post({ id, author, like, comment, description, image, createdAt}) {
       );
       setComments(result.data.comment);
       setCommentText("");
-      console.log(result);
+      toast.success("Comment added!");
     } catch (err) {
       console.log(err);
+      toast.error(err.response?.data?.message || "Failed to add comment");
     }
   }
 
@@ -75,7 +77,9 @@ function Post({ id, author, like, comment, description, image, createdAt}) {
       <div className="flex items-start justify-between">
         <div className="flex gap-3">
           <img
-            onClick={()=>{handleGetProfile(author.username)}}
+            onClick={() => {
+              handleGetProfile(author.username);
+            }}
             src={author.profileImage || "https://i.pravatar.cc/150?img=12"}
             alt="user"
             className="w-[48px] h-[48px] rounded-full object-cover"

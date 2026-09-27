@@ -1,38 +1,45 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../assets/logo.png";
-import {useNavigate , Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
+import toast from "react-hot-toast";
 import axios from "axios";
 
 function Login() {
   let navigate = useNavigate();
-  let [email,setEmail] = useState("");
-  let [password,setPassword] = useState("");
-  let [err,setErr] = useState("");
-  let [loading , setLoading] = useState(false);
-  let {serverUrl} = useContext(authDataContext);
-  let {userData,setUserData} = useContext(userDataContext);
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let [err, setErr] = useState("");
+  let [loading, setLoading] = useState(false);
+  let { serverUrl } = useContext(authDataContext);
+  let { userData, setUserData } = useContext(userDataContext);
 
-  const handleLogin = async (e) =>{
-    try{
+  const handleLogin = async (e) => {
+    try {
       setLoading(true);
       e.preventDefault();
-      let res = await axios.post(`${serverUrl}/api/auth/login`,{
-        email,
-        password
-      },{withCredentials:true});
+      let res = await axios.post(
+        `${serverUrl}/api/auth/login`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
       setUserData(res.data);
+      toast.success("Login successful!");
       navigate("/");
       setEmail("");
       setPassword("");
       setErr("");
       setLoading(false);
-    }catch(err){
+    } catch (err) {
       setErr(err.response.data.message);
       setLoading(false);
+      toast.error(err.response?.data?.message || "Invalid email or password");
     }
-  }
+  };
 
   return (
     <div className="w-full min-h-screen bg-white relative flex items-center justify-center px-4 py-10">
@@ -42,7 +49,10 @@ function Login() {
       </div>
 
       {/* Login Form */}
-      <form className="w-full max-w-[430px] bg-white border border-gray-200 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-8" onSubmit={handleLogin}>
+      <form
+        className="w-full max-w-[430px] bg-white border border-gray-200 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-8"
+        onSubmit={handleLogin}
+      >
         {/* Heading */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
@@ -57,7 +67,9 @@ function Login() {
             Email
           </label>
           <input
-            onChange={(e)=>{setEmail(e.target.value)}}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
             value={email}
             type="email"
             placeholder="Enter your email"
@@ -74,7 +86,9 @@ function Login() {
           </div>
 
           <input
-            onChange={(e)=>{setPassword(e.target.value)}}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
             value={password}
             type="password"
             placeholder="Enter your password"

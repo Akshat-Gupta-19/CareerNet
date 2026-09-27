@@ -5,6 +5,7 @@ import { authDataContext } from "../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,6 +25,7 @@ function Nav() {
       console.log(result.data);
     } catch (err) {
       console.log(err);
+      toast.error(err.response?.data?.message || "Unable to search users");
     }
   };
 
@@ -32,6 +34,7 @@ function Nav() {
       let result = axios.get(`${serverUrl}/api/auth/logout`, {
         withCredentials: true,
       });
+      toast.success("Logged out successfully!");
       navigate("/login");
       setUserData(null);
     } catch (err) {
@@ -186,7 +189,10 @@ function Nav() {
           </div>
 
           {/* Notifications */}
-          <div className="flex flex-col items-center cursor-pointer hover:text-black text-xs" onClick={()=>navigate("/notification")}>
+          <div
+            className="flex flex-col items-center cursor-pointer hover:text-black text-xs"
+            onClick={() => navigate("/notification")}
+          >
             <svg
               className="w-5 h-5 mb-0.5"
               fill="none"

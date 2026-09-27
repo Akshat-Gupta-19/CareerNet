@@ -6,6 +6,7 @@ import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
 import Post from "../components/Post";
 import ConnectionButton from "../components/ConnectionButton";
+import toast from "react-hot-toast";
 
 function Profile() {
   let { serverUrl } = useContext(authDataContext);

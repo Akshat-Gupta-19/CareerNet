@@ -8,6 +8,7 @@ import Post from "../components/Post";
 import { useNavigate } from "react-router-dom";
 import RightSidebar from "../components/RightSidebar";
 
+
 function Home() {
   let { userData, setUserData, edit, setEdit, postData, setPostData ,handleGetProfile} =
     useContext(userDataContext);

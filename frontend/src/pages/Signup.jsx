@@ -1,34 +1,40 @@
 import React, { useContext, useState } from "react";
-import {useNavigate , Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 function Signup() {
   let navigate = useNavigate();
-  let {serverUrl} = useContext(authDataContext);
-  let [firstName,setFirstName] = useState("");
-  let [lastName,setLastName] = useState("");
-  let [username,setUsername] = useState("");
-  let [email,setEmail] = useState("");
-  let [password,setPassword] = useState("");
-  let [loading , setLoading] = useState(false);
-  let [err,setErr] = useState("");
-  let {userData,setUserData} = useContext(userDataContext);
+  let { serverUrl } = useContext(authDataContext);
+  let [firstName, setFirstName] = useState("");
+  let [lastName, setLastName] = useState("");
+  let [username, setUsername] = useState("");
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let [loading, setLoading] = useState(false);
+  let [err, setErr] = useState("");
+  let { userData, setUserData } = useContext(userDataContext);
 
-  const handleSignup = async(e)=>{
+  const handleSignup = async (e) => {
     setLoading(true);
     e.preventDefault();
-    try{
-      let result = await axios.post(`${serverUrl}/api/auth/signup`,{
-        firstName,
-        lastName,
-        username,
-        email,
-        password,
-      },{withCredentials:true});
+    try {
+      let result = await axios.post(
+        `${serverUrl}/api/auth/signup`,
+        {
+          firstName,
+          lastName,
+          username,
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );
       setUserData(result.data);
+      toast.success("Account created successfully!");
       navigate("/");
       setFirstName("");
       setEmail("");
@@ -37,12 +43,12 @@ function Signup() {
       setUsername("");
       setLoading(false);
       setErr("");
-
-    }catch(err){
+    } catch (err) {
       setErr(err.response.data.message);
       setLoading(false);
+      toast.error(err.response?.data?.message || "Failed to create account");
     }
-  }
+  };
 
   return (
     <div className="w-full min-h-screen bg-white relative flex items-center justify-center px-4 py-10">
@@ -51,7 +57,10 @@ function Signup() {
       </div>
 
       {/* Signup Form */}
-      <form className="w-full max-w-[500px] bg-white border border-gray-200 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-8" onSubmit={handleSignup}>
+      <form
+        className="w-full max-w-[500px] bg-white border border-gray-200 rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-8"
+        onSubmit={handleSignup}
+      >
         {/* Heading */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
@@ -71,7 +80,9 @@ function Signup() {
             </label>
 
             <input
-              onChange={(e)=>{setFirstName(e.target.value)}}
+              onChange={(e) => {
+                setFirstName(e.target.value);
+              }}
               value={firstName}
               type="text"
               placeholder="First Name"
@@ -85,7 +96,9 @@ function Signup() {
             </label>
 
             <input
-              onChange={(e)=>{setLastName(e.target.value)}}
+              onChange={(e) => {
+                setLastName(e.target.value);
+              }}
               value={lastName}
               type="text"
               placeholder="Last Name"
@@ -101,7 +114,9 @@ function Signup() {
           </label>
 
           <input
-            onChange={(e)=>{setUsername(e.target.value)}}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
             value={username}
             type="text"
             placeholder="Enter your username"
@@ -116,7 +131,9 @@ function Signup() {
           </label>
 
           <input
-            onChange={(e)=>{setEmail(e.target.value)}}
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
             value={email}
             type="email"
             placeholder="Enter your email"
@@ -131,7 +148,9 @@ function Signup() {
           </label>
 
           <input
-            onChange={(e)=>{setPassword(e.target.value)}}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
             value={password}
             type="password"
             placeholder="Enter your password"
@@ -142,7 +161,7 @@ function Signup() {
         {err ? <p className=" text-red-500">{err}</p> : ""}
 
         {/* Signup Button */}
-        <button 
+        <button
           disabled={loading}
           type="submit"
           className="w-full h-12 rounded-lg bg-[#615fff] hover:bg-[#5048e5] text-white font-semibold text-lg transition duration-200"

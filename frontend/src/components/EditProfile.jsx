@@ -4,6 +4,7 @@ import { userDataContext } from "../context/UserContext";
 import { ImCross } from "react-icons/im";
 import axios from "axios";
 import { authDataContext } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 function EditProfile() {
   let { edit, setEdit, userData, setUserData } = useContext(userDataContext);
@@ -142,12 +143,13 @@ function EditProfile() {
           withCredentials: true,
         },
       );
-      console.log(result.data);
+      toast.success("Profile updated successfully!");
       setUserData(result.data);
       setEdit(false);
       setSaving(false);
     } catch (err) {
       console.log(err);
+      toast.error(err.response?.data?.message || "Failed to update profile");
     }
   };
 
