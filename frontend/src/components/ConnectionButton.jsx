@@ -120,15 +120,69 @@ function ConnectionButton({ userId }) {
     <button
       onClick={handleClick}
       disabled={status === "pending"}
-      className="px-4 py-1 rounded-full border border-[#0a9ccf] text-[#0788b7] text-sm"
+      className={`
+        h-[40px]
+        min-w-[105px]
+        px-5
+        rounded-full
+        text-sm
+        font-semibold
+        transition-all
+        duration-200
+        active:scale-[0.97]
+
+        ${
+          status === "none"
+            ? "bg-[#0a9ccf] text-white border border-[#0a9ccf] hover:bg-[#0788b7] hover:border-[#0788b7] shadow-[0_4px_12px_rgba(10,156,207,0.20)]"
+            : ""
+        }
+
+        ${
+          status === "pending"
+            ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
+            : ""
+        }
+
+        ${
+          status === "received"
+            ? "bg-[#eaf8fc] text-[#0788b7] border border-[#a9deeb] hover:bg-[#dff4f9]"
+            : ""
+        }
+
+        ${
+          status === "accepted"
+            ? "bg-green-50 text-green-600 border border-green-200 hover:bg-green-100"
+            : ""
+        }
+      `}
     >
-      {status === "none" && "Connect"}
+      {status === "none" && (
+        <span className="flex items-center justify-center gap-1.5">
+          <span className="text-base leading-none">+</span>
+          Connect
+        </span>
+      )}
 
-      {status === "pending" && "Pending"}
+      {status === "pending" && (
+        <span className="flex items-center justify-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-gray-400" />
+          Pending
+        </span>
+      )}
 
-      {status === "received" && "Received"}
+      {status === "received" && (
+        <span className="flex items-center justify-center gap-1.5">
+          <span>View Request</span>
+          <span className="text-xs">→</span>
+        </span>
+      )}
 
-      {status === "accepted" && "Connected"}
+      {status === "accepted" && (
+        <span className="flex items-center justify-center gap-1.5">
+          <span>✓</span>
+          Connected
+        </span>
+      )}
     </button>
   );
 }
