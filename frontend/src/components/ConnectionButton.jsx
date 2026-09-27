@@ -11,11 +11,8 @@ const socket = io("http://localhost:8000");
 
 function ConnectionButton({ userId }) {
   const { serverUrl } = useContext(authDataContext);
-
   const { userData } = useContext(userDataContext);
-
   const navigate = useNavigate();
-
   const [status, setStatus] = useState("none");
 
   // =========================

@@ -1,6 +1,6 @@
 import express from 'express';
 import isAuth from '../middlewares/isAuth.js';
-import { getCurrentUser, getProfile, updateProfile } from '../controllers/user.controllers.js';
+import { getCurrentUser, getProfile, getSuggestedUser, search, updateProfile } from '../controllers/user.controllers.js';
 import upload from '../middlewares/multer.js'
 
 let userRouter = express.Router();
@@ -11,4 +11,7 @@ userRouter.put("/updateProfile",isAuth,upload.fields([
     {name : "coverImage",maxCount:1}
 ]),updateProfile);
 userRouter.get("/profile/:username",isAuth,getProfile);
+userRouter.get("/search",isAuth,search);
+userRouter.get("/suggestedUsers",isAuth,getSuggestedUser);
+
 export default userRouter;

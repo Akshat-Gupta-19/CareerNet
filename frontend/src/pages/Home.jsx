@@ -6,6 +6,7 @@ import EditProfile from "../components/EditProfile";
 import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
 import { useNavigate } from "react-router-dom";
+import RightSidebar from "../components/RightSidebar";
 
 function Home() {
   let { userData, setUserData, edit, setEdit, postData, setPostData ,handleGetProfile} =
@@ -138,44 +139,8 @@ function Home() {
           {/*                    RIGHT SIDEBAR                    */}
           {/* ================================================= */}
 
-          <div className="w-full">
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-              <div className="p-5">
-                <h3 className="font-semibold text-gray-800 text-[17px]">
-                  LinkedIn News
-                </h3>
+            <RightSidebar/>
 
-                <div className="mt-5 space-y-5">
-                  {/* News 1 */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">
-                      Top skills companies are hiring
-                    </p>
-
-                    <p className="text-xs text-gray-500 mt-1">2 days ago</p>
-                  </div>
-
-                  {/* News 2 */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">
-                      Technology trends in 2026
-                    </p>
-
-                    <p className="text-xs text-gray-500 mt-1">3 days ago</p>
-                  </div>
-
-                  {/* News 3 */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">
-                      Developer jobs are growing
-                    </p>
-
-                    <p className="text-xs text-gray-500 mt-1">4 days ago</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
