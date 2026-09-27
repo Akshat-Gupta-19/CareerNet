@@ -9,6 +9,7 @@ import postRouter from "./routes/post.routes.js";
 import connectionRouter from "./routes/connection.routes.js";
 import http from "http";
 import { Server } from "socket.io";
+import notificationRouter from "./routes/notification.routes.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/connection", connectionRouter);
+app.use("/api/notification",notificationRouter);
 
 // ===============================
 // SOCKET.IO

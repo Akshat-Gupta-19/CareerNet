@@ -186,7 +186,7 @@ function Nav() {
           </div>
 
           {/* Notifications */}
-          <div className="flex flex-col items-center cursor-pointer hover:text-black text-xs">
+          <div className="flex flex-col items-center cursor-pointer hover:text-black text-xs" onClick={()=>navigate("/notification")}>
             <svg
               className="w-5 h-5 mb-0.5"
               fill="none"

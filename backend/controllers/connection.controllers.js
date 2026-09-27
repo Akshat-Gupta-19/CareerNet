@@ -1,5 +1,6 @@
 import { io, userSocketMap } from "../index.js";
 import Connection from "../models/connection.model.js";
+import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
 
 export const sendConnection = async (req, res) => {
@@ -27,7 +28,7 @@ export const sendConnection = async (req, res) => {
     const senderUser = await User.findById(sender);
 
     const alreadyConnected = senderUser.connection.some(
-      (user) => user.toString() === id.toString()
+      (user) => user.toString() === id.toString(),
     );
 
     if (alreadyConnected) {
@@ -69,13 +70,9 @@ export const sendConnection = async (req, res) => {
     // SOCKET
     // =========================
 
-    const senderSocketId = userSocketMap.get(
-      sender.toString()
-    );
+    const senderSocketId = userSocketMap.get(sender.toString());
 
-    const receiverSocketId = userSocketMap.get(
-      id.toString()
-    );
+    const receiverSocketId = userSocketMap.get(id.toString());
 
     // Receiver -> Received
     if (receiverSocketId) {
@@ -97,7 +94,6 @@ export const sendConnection = async (req, res) => {
       message: "Connection request sent",
       connection,
     });
-
   } catch (err) {
     console.log("sendConnection:", err);
 
@@ -128,18 +124,14 @@ export const acceptConnection = async (req, res) => {
     }
 
     // Only receiver can accept
-    if (
-      connection.receiver.toString() !==
-      userId.toString()
-    ) {
+    if (connection.receiver.toString() !== userId.toString()) {
       return res.status(403).json({
         message: "You cannot accept this request",
       });
     }
 
-    // Update status
+    // Update connection status
     connection.status = "accepted";
-
     await connection.save();
 
     // Add connection to both users
@@ -154,6 +146,21 @@ export const acceptConnection = async (req, res) => {
         connection: connection.receiver,
       },
     });
+
+    // =========================
+    // NOTIFICATION
+    // =========================
+
+    const notification = await Notification.create({
+      receiver: connection.sender,
+      type: "connectionAccepted",
+      relatedUser: userId,
+    });
+
+    await notification.populate(
+      "relatedUser",
+      "firstName lastName username profileImage"
+    );
 
     // =========================
     // SOCKET
@@ -177,10 +184,17 @@ export const acceptConnection = async (req, res) => {
 
     // Sender
     if (senderSocketId) {
+      // Connection status update
       io.to(senderSocketId).emit("connectionUpdate", {
         userId: connection.receiver.toString(),
         status: "accepted",
       });
+
+      // New notification
+      io.to(senderSocketId).emit(
+        "newNotification",
+        notification
+      );
     }
 
     return res.status(200).json({
@@ -202,9 +216,7 @@ export const rejectConnection = async (req, res) => {
     const { connectionId } = req.params;
     const userId = req.userId;
 
-    const connection = await Connection.findById(
-      connectionId
-    );
+    const connection = await Connection.findById(connectionId);
 
     if (!connection) {
       return res.status(404).json({
@@ -219,10 +231,7 @@ export const rejectConnection = async (req, res) => {
     }
 
     // Only receiver can reject
-    if (
-      connection.receiver.toString() !==
-      userId.toString()
-    ) {
+    if (connection.receiver.toString() !== userId.toString()) {
       return res.status(403).json({
         message: "You cannot reject this request",
       });
@@ -235,23 +244,18 @@ export const rejectConnection = async (req, res) => {
     await Connection.findByIdAndDelete(connectionId);
 
     // Notify sender
-    const senderSocketId =
-      userSocketMap.get(senderId);
+    const senderSocketId = userSocketMap.get(senderId);
 
     if (senderSocketId) {
-      io.to(senderSocketId).emit(
-        "connectionUpdate",
-        {
-          userId: receiverId,
-          status: "none",
-        }
-      );
+      io.to(senderSocketId).emit("connectionUpdate", {
+        userId: receiverId,
+        status: "none",
+      });
     }
 
     return res.status(200).json({
       message: "Connection request rejected",
     });
-
   } catch (err) {
     console.log("rejectConnection:", err);
 
@@ -309,12 +313,8 @@ export const getConnectionStatus = async (req, res) => {
     // =========================
 
     if (connection.status === "pending") {
-
       // Current user sent request
-      if (
-        connection.sender.toString() ===
-        userId.toString()
-      ) {
+      if (connection.sender.toString() === userId.toString()) {
         return res.status(200).json({
           status: "pending",
           connectionId: connection._id,
@@ -332,7 +332,6 @@ export const getConnectionStatus = async (req, res) => {
     return res.status(200).json({
       status: "none",
     });
-
   } catch (err) {
     console.log("getConnectionStatus:", err);
 
@@ -395,19 +394,13 @@ export const removeConnection = async (req, res) => {
     // Delete connection document
     await Connection.findByIdAndDelete(connectionId);
 
-
     // =====================================
     // SOCKET.IO REAL-TIME UPDATE
     // =====================================
 
-    const userSocketId = userSocketMap.get(
-      userId.toString()
-    );
+    const userSocketId = userSocketMap.get(userId.toString());
 
-    const otherUserSocketId = userSocketMap.get(
-      otherUser.toString()
-    );
-
+    const otherUserSocketId = userSocketMap.get(otherUser.toString());
 
     // Current user's UI → Connect
     if (userSocketId) {
@@ -417,7 +410,6 @@ export const removeConnection = async (req, res) => {
       });
     }
 
-
     // Other user's UI → Connect
     if (otherUserSocketId) {
       io.to(otherUserSocketId).emit("connectionUpdate", {
@@ -426,11 +418,9 @@ export const removeConnection = async (req, res) => {
       });
     }
 
-
     return res.status(200).json({
       message: "Connection removed successfully",
     });
-
   } catch (err) {
     console.log("removeConnection error:", err);
 
@@ -449,16 +439,12 @@ export const getConnectionRequests = async (req, res) => {
       receiver: userId,
       status: "pending",
     })
-      .populate(
-        "sender",
-        "firstName lastName username profileImage headline"
-      )
+      .populate("sender", "firstName lastName username profileImage headline")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
       requests,
     });
-
   } catch (err) {
     return res.status(500).json({
       message: "getConnectionRequests error",
@@ -473,40 +459,29 @@ export const getUsersConnections = async (req, res) => {
 
     const connections = await Connection.find({
       status: "accepted",
-      $or: [
-        { sender: userId },
-        { receiver: userId },
-      ],
+      $or: [{ sender: userId }, { receiver: userId }],
     })
-      .populate(
-        "sender",
-        "firstName lastName username profileImage headline"
-      )
+      .populate("sender", "firstName lastName username profileImage headline")
       .populate(
         "receiver",
-        "firstName lastName username profileImage headline"
+        "firstName lastName username profileImage headline",
       );
 
-    const formattedConnections = connections.map(
-      (connection) => {
+    const formattedConnections = connections.map((connection) => {
+      const otherUser =
+        connection.sender._id.toString() === userId.toString()
+          ? connection.receiver
+          : connection.sender;
 
-        const otherUser =
-          connection.sender._id.toString() ===
-          userId.toString()
-            ? connection.receiver
-            : connection.sender;
-
-        return {
-          connectionId: connection._id,
-          user: otherUser,
-        };
-      }
-    );
+      return {
+        connectionId: connection._id,
+        user: otherUser,
+      };
+    });
 
     return res.status(200).json({
       connections: formattedConnections,
     });
-
   } catch (err) {
     return res.status(500).json({
       message: "getUsersConnections error",
