@@ -7,7 +7,7 @@ import { io } from "socket.io-client";
 import ConnectionButton from "./ConnectionButton";
 import toast from "react-hot-toast";
 
-let socket = io("http://localhost:8000");
+let socket = io("https://careernet-backend.onrender.com");
 
 function Post({ id, author, like, comment, description, image, createdAt }) {
   let [more, setMore] = useState(false);
