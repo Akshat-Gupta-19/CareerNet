@@ -4,22 +4,13 @@ import { userDataContext } from "../context/UserContext";
 import EditProfile from "../components/EditProfile";
 import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
-import { useNavigate } from "react-router-dom";
 import RightSidebar from "../components/RightSidebar";
 
 function Home() {
-  let {
-    userData,
-    setUserData,
-    edit,
-    setEdit,
-    postData,
-    setPostData,
-    handleGetProfile,
-  } = useContext(userDataContext);
+  let { userData, edit, setEdit, postData, handleGetProfile } =
+    useContext(userDataContext);
 
   let [createPost, setCreatePost] = useState(false);
-  const navigate = useNavigate();
 
   return (
     <div className="w-full min-h-screen bg-[#f4f7f9]">
@@ -59,18 +50,38 @@ function Home() {
           {/*                    LEFT SIDEBAR                   */}
           {/* ================================================= */}
 
-          <div
+          <aside
             className="
+              hidden
+              lg:block
               w-full
               lg:h-full
               lg:overflow-hidden
             "
           >
-            <div className="lg:sticky lg:top-0">
+            <div className="h-full">
               {/* Profile Card */}
-              <div className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
+              <div
+                className="
+                  bg-white
+                  rounded-2xl
+                  overflow-hidden
+                  border
+                  border-gray-200/80
+                  shadow-[0_2px_10px_rgba(0,0,0,0.04)]
+                "
+              >
                 {/* ================= COVER IMAGE ================= */}
-                <div className="h-[105px] sm:h-[115px] relative bg-gradient-to-br from-[#dff5fb] to-[#bdeaf5]">
+                <div
+                  className="
+                    h-[105px]
+                    sm:h-[115px]
+                    relative
+                    bg-gradient-to-br
+                    from-[#dff5fb]
+                    to-[#bdeaf5]
+                  "
+                >
                   <img
                     src={userData.coverImage}
                     alt="cover"
@@ -79,14 +90,33 @@ function Home() {
 
                   {/* ================= PROFILE IMAGE ================= */}
                   <div className="absolute -bottom-11 left-1/2 -translate-x-1/2">
-                    <div className="w-[88px] h-[88px] rounded-full border-[4px] border-white bg-gray-100 overflow-hidden shadow-md">
+                    <div
+                      className="
+                        w-[88px]
+                        h-[88px]
+                        rounded-full
+                        border-[4px]
+                        border-white
+                        bg-gray-100
+                        overflow-hidden
+                        shadow-md
+                      "
+                    >
                       <img
                         onClick={() => {
                           handleGetProfile(userData.username);
                         }}
                         src={userData.profileImage}
                         alt="profile"
-                        className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                        className="
+                          w-full
+                          h-full
+                          object-cover
+                          cursor-pointer
+                          hover:scale-105
+                          transition-transform
+                          duration-300
+                        "
                       />
                     </div>
                   </div>
@@ -94,15 +124,40 @@ function Home() {
 
                 {/* ================= PROFILE INFO ================= */}
                 <div className="pt-14 pb-5 px-4 sm:px-5 text-center">
-                  <h2 className="text-[18px] sm:text-[20px] font-bold text-gray-800 truncate">
+                  <h2
+                    className="
+                      text-[18px]
+                      sm:text-[20px]
+                      font-bold
+                      text-gray-800
+                      truncate
+                    "
+                  >
                     {userData.firstName} {userData.lastName}
                   </h2>
 
-                  <p className="text-[13px] sm:text-[14px] text-gray-500 mt-1.5 leading-5 line-clamp-2">
+                  <p
+                    className="
+                      text-[13px]
+                      sm:text-[14px]
+                      text-gray-500
+                      mt-1.5
+                      leading-5
+                      line-clamp-2
+                    "
+                  >
                     {userData.headline}
                   </p>
 
-                  <p className="text-[12px] sm:text-[13px] text-gray-400 mt-1.5 truncate">
+                  <p
+                    className="
+                      text-[12px]
+                      sm:text-[13px]
+                      text-gray-400
+                      mt-1.5
+                      truncate
+                    "
+                  >
                     {userData.location}
                   </p>
 
@@ -131,13 +186,13 @@ function Home() {
                 </div>
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* ================================================= */}
           {/*                 CENTER POST FEED                  */}
           {/* ================================================= */}
 
-          <div
+          <main
             className="
               w-full
               min-w-0
@@ -152,6 +207,8 @@ function Home() {
             {/* ================= CREATE POST ================= */}
             <div
               className="
+                hidden
+                lg:block
                 bg-white
                 rounded-2xl
                 border
@@ -211,17 +268,59 @@ function Home() {
 
               {/* Post Options */}
               <div className="grid grid-cols-3 mt-3 sm:mt-4 pt-2 border-t border-gray-100">
-                <button className="flex items-center justify-center gap-1.5 sm:gap-2 py-2 rounded-lg text-gray-500 hover:text-[#0a9ccf] hover:bg-[#f2fbfd] transition-all">
+                <button
+                  className="
+                    flex
+                    items-center
+                    justify-center
+                    gap-1.5
+                    sm:gap-2
+                    py-2
+                    rounded-lg
+                    text-gray-500
+                    hover:text-[#0a9ccf]
+                    hover:bg-[#f2fbfd]
+                    transition-all
+                  "
+                >
                   <span className="text-lg">📷</span>
                   <span className="text-xs sm:text-sm font-medium">Photo</span>
                 </button>
 
-                <button className="flex items-center justify-center gap-1.5 sm:gap-2 py-2 rounded-lg text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all">
+                <button
+                  className="
+                    flex
+                    items-center
+                    justify-center
+                    gap-1.5
+                    sm:gap-2
+                    py-2
+                    rounded-lg
+                    text-gray-500
+                    hover:text-green-600
+                    hover:bg-green-50
+                    transition-all
+                  "
+                >
                   <span className="text-lg">🎥</span>
                   <span className="text-xs sm:text-sm font-medium">Video</span>
                 </button>
 
-                <button className="flex items-center justify-center gap-1.5 sm:gap-2 py-2 rounded-lg text-gray-500 hover:text-orange-500 hover:bg-orange-50 transition-all">
+                <button
+                  className="
+                    flex
+                    items-center
+                    justify-center
+                    gap-1.5
+                    sm:gap-2
+                    py-2
+                    rounded-lg
+                    text-gray-500
+                    hover:text-orange-500
+                    hover:bg-orange-50
+                    transition-all
+                  "
+                >
                   <span className="text-lg">📅</span>
                   <span className="text-xs sm:text-sm font-medium">Event</span>
                 </button>
@@ -243,23 +342,25 @@ function Home() {
                 />
               ))}
             </div>
-          </div>
+          </main>
 
           {/* ================================================= */}
           {/*                    RIGHT SIDEBAR                  */}
           {/* ================================================= */}
 
-          <div
+          <aside
             className="
+              hidden
+              lg:block
               w-full
               lg:h-full
               lg:overflow-hidden
             "
           >
-            <div className="lg:sticky lg:top-0">
+            <div className="h-full">
               <RightSidebar />
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </div>

@@ -5,21 +5,56 @@ import { authDataContext } from "../context/AuthContext";
 import { userDataContext } from "../context/UserContext";
 import { io } from "socket.io-client";
 import ConnectionButton from "./ConnectionButton";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 let socket = io("http://localhost:8000");
 
 function Post({ id, author, like, comment, description, image, createdAt }) {
-  const navigate = useNavigate();
-
   let [more, setMore] = useState(false);
+  let [menuOpen, setMenuOpen] = useState(false);
+  let [deleting, setDeleting] = useState(false);
+
   let { serverUrl } = useContext(authDataContext);
+
   let [likes, setlikes] = useState(like || []);
+
   let { getPost, userData, handleGetProfile } = useContext(userDataContext);
+
   let [showComment, setShowComment] = useState(false);
   let [commentText, setCommentText] = useState("");
   let [comments, setComments] = useState(comment || []);
+
+  /* =================================================
+                     DELETE POST
+  ================================================= */
+
+  async function handleDeletePost() {
+    try {
+      setDeleting(true);
+
+      await axios.delete(`${serverUrl}/api/post/delete/${id}`, {
+        withCredentials: true,
+      });
+
+      toast.success("Post deleted successfully!");
+
+      if (getPost) {
+        await getPost();
+      }
+
+      setMenuOpen(false);
+    } catch (err) {
+      console.log(err);
+
+      toast.error(err.response?.data?.message || "Failed to delete post");
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  /* =================================================
+                       LIKE
+  ================================================= */
 
   async function handleLike() {
     try {
@@ -32,6 +67,10 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       console.log(err);
     }
   }
+
+  /* =================================================
+                      COMMENT
+  ================================================= */
 
   async function handleComment() {
     try {
@@ -49,12 +88,18 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
 
       setComments(result.data.comment);
       setCommentText("");
+
       toast.success("Comment added!");
     } catch (err) {
       console.log(err);
+
       toast.error(err.response?.data?.message || "Failed to add comment");
     }
   }
+
+  /* =================================================
+                    SOCKET EVENTS
+  ================================================= */
 
   useEffect(() => {
     socket.on("likeUpdated", ({ postId, likes }) => {
@@ -89,12 +134,13 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       "
     >
       {/* ================================================= */}
-      {/* POST HEADER */}
+      {/*                    POST HEADER                    */}
       {/* ================================================= */}
 
       <div className="px-4 sm:px-5 pt-4 sm:pt-5">
         <div className="flex items-start justify-between gap-3">
-          {/* Author */}
+          {/* ================= AUTHOR ================= */}
+
           <div className="flex items-center gap-3 min-w-0">
             <img
               onClick={() => {
@@ -160,33 +206,118 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
                     strokeWidth="2"
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
+
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7z"
                   />
                 </svg>
               </div>
             </div>
           </div>
 
-          {/* Connection */}
-          {userData._id != author._id && (
-            <div className="shrink-0">
+          {/* ================= ACTIONS ================= */}
+
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Connection */}
+
+            {userData._id != author._id && (
               <ConnectionButton userId={author._id} />
-            </div>
-          )}
+            )}
+
+            {/* Own Post Menu */}
+
+            {userData._id == author._id && (
+              <div className="relative">
+                <button
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  className="
+                    w-9
+                    h-9
+                    rounded-full
+                    flex
+                    items-center
+                    justify-center
+                    text-gray-500
+                    hover:bg-gray-100
+                    hover:text-gray-700
+                    transition-all
+                  "
+                >
+                  <span className="text-xl leading-none">⋮</span>
+                </button>
+
+                {/* DELETE MENU */}
+
+                {menuOpen && (
+                  <div
+                    className="
+                      absolute
+                      right-0
+                      top-11
+                      z-30
+                      w-[150px]
+                      bg-white
+                      border
+                      border-gray-200
+                      rounded-xl
+                      shadow-[0_8px_25px_rgba(0,0,0,0.10)]
+                      overflow-hidden
+                    "
+                  >
+                    <button
+                      onClick={() => {
+                        const confirmed = window.confirm(
+                          "Are you sure you want to delete this post?",
+                        );
+
+                        if (confirmed) {
+                          handleDeletePost();
+                        }
+                      }}
+                      disabled={deleting}
+                      className="
+                        w-full
+                        px-4
+                        py-3
+                        text-left
+                        text-sm
+                        font-medium
+                        text-red-500
+                        hover:bg-red-50
+                        transition-colors
+                        disabled:opacity-50
+                      "
+                    >
+                      {deleting ? "Deleting..." : "🗑 Delete Post"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ================================================= */}
-      {/* POST CONTENT */}
+      {/*                  POST CONTENT                     */}
       {/* ================================================= */}
 
       <div className="px-4 sm:px-5 mt-4">
-        {/* Description */}
-        <p className="text-gray-700 text-[13px] sm:text-[14px] leading-6 whitespace-pre-wrap break-words">
+        {/* DESCRIPTION */}
+
+        <p
+          className="
+            text-gray-700
+            text-[13px]
+            sm:text-[14px]
+            leading-6
+            whitespace-pre-wrap
+            break-words
+          "
+        >
           {more ? description : description.slice(0, 150)}
 
           {description.length > 150 && (
@@ -206,7 +337,8 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
           )}
         </p>
 
-        {/* Image */}
+        {/* IMAGE */}
+
         {image && (
           <div
             className="
@@ -236,7 +368,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       </div>
 
       {/* ================================================= */}
-      {/* ENGAGEMENT COUNTS */}
+      {/*                ENGAGEMENT COUNTS                 */}
       {/* ================================================= */}
 
       <div
@@ -282,7 +414,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
       </div>
 
       {/* ================================================= */}
-      {/* ACTIONS */}
+      {/*                     ACTIONS                       */}
       {/* ================================================= */}
 
       <div
@@ -299,6 +431,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
         "
       >
         {/* LIKE */}
+
         <button
           className={`
             flex-1
@@ -328,6 +461,7 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
         </button>
 
         {/* COMMENT */}
+
         <button
           onClick={() => setShowComment(!showComment)}
           className={`
@@ -350,17 +484,19 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
           `}
         >
           <span className="text-base">💬</span>
+
           <span>Comment</span>
         </button>
       </div>
 
       {/* ================================================= */}
-      {/* COMMENT SECTION */}
+      {/*                  COMMENT SECTION                  */}
       {/* ================================================= */}
 
       {showComment && (
         <div className="px-4 sm:px-5 pb-5 pt-3">
-          {/* Comment Input */}
+          {/* COMMENT INPUT */}
+
           <div className="flex items-center gap-2 sm:gap-3">
             <img
               src={userData?.profileImage || "https://i.pravatar.cc/150?img=12"}
@@ -429,12 +565,18 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
             </button>
           </div>
 
-          {/* ================================================= */}
           {/* COMMENTS */}
-          {/* ================================================= */}
 
           {comments.length > 0 && (
-            <div className="mt-5 border-t border-gray-100 pt-4 space-y-4">
+            <div
+              className="
+                mt-5
+                border-t
+                border-gray-100
+                pt-4
+                space-y-4
+              "
+            >
               {comments.map((item, index) => (
                 <div key={item._id || index} className="flex gap-2.5 sm:gap-3">
                   <img
@@ -470,15 +612,40 @@ function Post({ id, author, like, comment, description, image, createdAt }) {
                       max-w-[calc(100%-45px)]
                     "
                   >
-                    <p className="font-semibold text-xs sm:text-[13px] text-gray-800 truncate">
+                    <p
+                      className="
+                        font-semibold
+                        text-xs
+                        sm:text-[13px]
+                        text-gray-800
+                        truncate
+                      "
+                    >
                       {item.author?.firstName} {item.author?.lastName}
                     </p>
 
-                    <p className="text-[10px] sm:text-[11px] text-gray-400 truncate mt-0.5">
+                    <p
+                      className="
+                        text-[10px]
+                        sm:text-[11px]
+                        text-gray-400
+                        truncate
+                        mt-0.5
+                      "
+                    >
                       {item.author?.headline}
                     </p>
 
-                    <p className="text-xs sm:text-[13px] text-gray-700 mt-1.5 leading-5 break-words">
+                    <p
+                      className="
+                        text-xs
+                        sm:text-[13px]
+                        text-gray-700
+                        mt-1.5
+                        leading-5
+                        break-words
+                      "
+                    >
                       {item.content}
                     </p>
                   </div>

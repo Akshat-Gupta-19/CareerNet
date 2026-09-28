@@ -1,15 +1,13 @@
 import axios from "axios";
-import React from "react";
-import { useContext } from "react";
-import { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { authDataContext } from "../context/AuthContext";
-import { useEffect } from "react";
 import ConnectionButton from "./ConnectionButton";
 import { userDataContext } from "../context/UserContext";
 
 function RightSidebar() {
   let { handleGetProfile } = useContext(userDataContext);
   let { serverUrl } = useContext(authDataContext);
+
   let [suggestedUsers, setSuggestedUsers] = useState([]);
 
   const handleSuggestedUsers = async () => {
@@ -29,7 +27,7 @@ function RightSidebar() {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <div
         className="
           bg-white
@@ -38,13 +36,16 @@ function RightSidebar() {
           border-gray-200/80
           shadow-[0_2px_12px_rgba(0,0,0,0.04)]
           overflow-hidden
+          h-full
+          flex
+          flex-col
         "
       >
         {/* ================================= */}
         {/* HEADER */}
         {/* ================================= */}
 
-        <div className="px-4 sm:px-5 pt-5 pb-4">
+        <div className="px-4 sm:px-5 pt-5 pb-4 shrink-0">
           <div className="flex items-center gap-3">
             <div
               className="
@@ -86,13 +87,37 @@ function RightSidebar() {
         </div>
 
         {/* ================================= */}
-        {/* SUGGESTED USERS */}
+        {/* SCROLLABLE USERS */}
         {/* ================================= */}
 
-        <div className="px-3 sm:px-4 pb-2">
+        <div
+          className="
+            flex-1
+            min-h-0
+            overflow-y-auto
+            px-3
+            sm:px-4
+            pb-2
+            scrollbar-thin
+            scrollbar-thumb-gray-300
+            scrollbar-track-transparent
+          "
+        >
           {suggestedUsers.length === 0 ? (
             <div className="py-7 text-center">
-              <div className="w-10 h-10 mx-auto rounded-xl bg-gray-50 flex items-center justify-center mb-2">
+              <div
+                className="
+                  w-10
+                  h-10
+                  mx-auto
+                  rounded-xl
+                  bg-gray-50
+                  flex
+                  items-center
+                  justify-center
+                  mb-2
+                "
+              >
                 <svg
                   className="w-5 h-5 text-gray-300"
                   fill="none"
@@ -171,9 +196,8 @@ function RightSidebar() {
                     @{user.username}
                   </p>
 
-                  {/* Skills */}
                   <p className="text-[9px] sm:text-[10px] text-gray-400 truncate mt-1">
-                    {user.skills.join(" • ")}
+                    {user.skills?.join(" • ")}
                   </p>
                 </div>
 
@@ -190,7 +214,7 @@ function RightSidebar() {
         {/* SHOW MORE */}
         {/* ================================= */}
 
-        <div className="border-t border-gray-100 px-4 py-3">
+        <div className="border-t border-gray-100 px-4 py-3 shrink-0">
           <button
             className="
               w-full

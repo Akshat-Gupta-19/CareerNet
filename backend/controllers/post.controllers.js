@@ -162,3 +162,41 @@ export const comment = async (req, res) => {
     });
   }
 };
+
+export const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userId = req.userId;
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found",
+      });
+    }
+    // Only post owner can delete the post
+    if (post.author.toString() !== userId.toString()) {
+      return res.status(403).json({
+        message: "You are not allowed to delete this post",
+      });
+    }
+
+    await Post.findByIdAndDelete(postId);
+
+    // Delete notifications related to this post
+    await Notification.deleteMany({
+      relatedPost: postId,
+    });
+
+    return res.status(200).json({
+      message: "Post deleted successfully",
+      postId,
+    });
+  } catch (err) {
+    console.log("Delete Post Error:", err);
+
+    return res.status(500).json({
+      message: "Failed to delete post",
+      error: err.message,
+    });
+  }
+};

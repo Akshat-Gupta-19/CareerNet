@@ -7,9 +7,12 @@ import { authDataContext } from "../context/AuthContext";
 import Post from "../components/Post";
 import ConnectionButton from "../components/ConnectionButton";
 import toast from "react-hot-toast";
+import RightSidebar from "../components/RightSidebar";
+import CreatePost from "../components/CreatePost";
 
 function Profile() {
   let { serverUrl } = useContext(authDataContext);
+  let [createPost, setCreatePost] = useState(false);
 
   let {
     userData,
@@ -38,6 +41,7 @@ function Profile() {
       <Nav />
 
       {edit && <EditProfile />}
+      {createPost && <CreatePost setCreatePost={setCreatePost} />}
 
       <div className="w-full max-w-[1100px] mx-auto px-3 sm:px-5 lg:px-6 py-5 sm:py-7">
         {/* ================================================= */}
@@ -173,7 +177,7 @@ function Profile() {
         {/* ================================================= */}
 
         <section className="bg-white rounded-2xl border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-4 sm:p-5 md:p-6 mt-5">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between gap-3 mb-5">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                 Posts
@@ -184,6 +188,29 @@ function Profile() {
                 {profilePost.length === 1 ? "Post" : "Posts"}
               </p>
             </div>
+
+            {profileData._id == userData._id && (
+              <button
+                onClick={() => setCreatePost(true)}
+                className="
+        shrink-0
+        px-4
+        sm:px-5
+        h-[38px]
+        rounded-full
+        bg-[#0a9ccf]
+        hover:bg-[#0788b7]
+        text-white
+        text-xs
+        sm:text-sm
+        font-semibold
+        transition-all
+        active:scale-[0.98]
+      "
+              >
+                + Start a post
+              </button>
+            )}
           </div>
 
           {/* Posts */}
@@ -354,6 +381,10 @@ function Profile() {
             </div>
           )}
         </section>
+
+        <div className="block lg:hidden mt-5 mb-8">
+          <RightSidebar />
+        </div>
       </div>
     </div>
   );
