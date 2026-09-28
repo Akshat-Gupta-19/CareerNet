@@ -1,7 +1,7 @@
 import React, { createContext } from 'react'
 export const authDataContext = createContext();
 export default function AuthContext({children}) {
-    const serverUrl = "http://localhost:8000"
+    const serverUrl = "https://careernet-backend.onrender.com"
     let value = { 
         serverUrl
     }
