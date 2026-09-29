@@ -53,9 +53,14 @@ export const signUp = async (req, res) => {
 
     const token = await genToken(user._id);
 
+    // Keep cookie as fallback
     res.cookie("token", token, cookieOptions);
 
-    return res.status(201).json(user);
+    return res.status(201).json({
+      message: "Signup successful",
+      user,
+      token,
+    });
   } catch (err) {
     return res.status(500).json({
       message: err.message,
@@ -97,11 +102,13 @@ export const login = async (req, res) => {
 
     const token = await genToken(user._id);
 
+    // Keep cookie authentication for browsers that support it
     res.cookie("token", token, cookieOptions);
 
     return res.status(200).json({
       message: "Login successful",
       user,
+      token,
     });
   } catch (err) {
     return res.status(500).json({
