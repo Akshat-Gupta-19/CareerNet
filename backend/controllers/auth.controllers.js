@@ -11,6 +11,10 @@ const cookieOptions = {
   secure: isProduction,
 };
 
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("IS PRODUCTION:", isProduction);
+console.log("COOKIE OPTIONS:", cookieOptions);
+
 export const signUp = async (req, res) => {
   try {
     const { firstName, lastName, username, email, password } = req.body;
