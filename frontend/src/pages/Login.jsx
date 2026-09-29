@@ -17,29 +17,56 @@ function Login() {
 
   const handleLogin = async (e) => {
     try {
-      setLoading(true);
       e.preventDefault();
 
-      let res = await axios.post(
+      setLoading(true);
+
+      const res = await axios.post(
         `${serverUrl}/api/auth/login`,
         {
           email,
           password,
         },
-        { withCredentials: true },
+        {
+          withCredentials: true,
+        },
       );
 
-      setUserData(res.data);
+      // ==========================================
+      // SAVE JWT TOKEN
+      // ==========================================
+
+      const token = res.data.token;
+
+      localStorage.setItem("token", token);
+
+      // ==========================================
+      // SET AXIOS AUTHORIZATION HEADER
+      // ==========================================
+
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // ==========================================
+      // SET USER DATA
+      // ==========================================
+
+      setUserData(res.data.user);
+
       toast.success("Login successful!");
-      navigate("/");
+
       setEmail("");
       setPassword("");
       setErr("");
-      setLoading(false);
+
+      navigate("/");
     } catch (err) {
-      setErr(err.response.data.message);
-      setLoading(false);
+      console.log("LOGIN ERROR:", err);
+
+      setErr(err.response?.data?.message || "Invalid email or password");
+
       toast.error(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,7 +99,6 @@ function Login() {
         {/* ================= HEADING ================= */}
 
         <div className="text-center mb-7 sm:mb-8">
-
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
             Welcome Back
           </h1>
